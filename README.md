@@ -13,3 +13,6 @@ dotnet sln StoreApp add StoreApp.Data
 dotnet sln StoreApp add StoreApp.Web
 
 
+
+dotnet ef migrations add InitialCreate --context StoreDbContext
+dotnet ef database update
