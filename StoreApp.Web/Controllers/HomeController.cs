@@ -9,25 +9,34 @@ public class HomeController:Controller
 
     private IStoreRepository _storeRepository;
 
+    public int pageSize = 3;
     public HomeController(IStoreRepository storeRepository)
     {
         _storeRepository = storeRepository;
     }
 
     //normalde Data projesinde olan entity i burada kullanabilmemiz için map'leme yaptık bu projenin içerisinde Product=>Product
-    public IActionResult Index()
+    //localhost:5103/products/page/2
+    public IActionResult Index(int page = 1)
     {
-        var products = _storeRepository.Products.Select(p => new ProductViewModel
+        var products = _storeRepository
+        .Products
+        .Skip((page - 1 ) * pageSize)
+        .Select(p => new ProductViewModel
         {
             Id = p.Id,
             Name = p.Name,
             Description = p.Description,
             Price = p.Price
-        }).ToList();
+        }).Take(pageSize);
 
 
         return View(new ProductListViewModel {
-            Products = products
+            Products = products,
+            PageInfo = new PageInfo{
+                ItemsPerPage = pageSize,
+                TotalItems = _storeRepository.Products.Count()
+            }
         });
     }
 }
